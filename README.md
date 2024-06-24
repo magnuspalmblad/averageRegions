@@ -1,5 +1,5 @@
 # averageRegions
-averageRegions averages the spectra in defined regions in a SCiLS Lab dataset
+averageRegions averages the spectra in defined regions in a SCiLS Lab dataset.
 
 [1. Introduction](#1-Introduction)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1.1 What is averageRegions?](#11-What-is-averageRegions)  
