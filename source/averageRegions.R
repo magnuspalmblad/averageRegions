@@ -168,23 +168,24 @@ runScriptOnFiles <- function() {
         file.create(output_file)
       }
       
-      if (tclvalue(normalizeState) == "1") {
-        TIC <- sum(averageSpectrum$intensities)
-        for (j in 1:length(averageSpectrum$intensities))
-          averageSpectrum$intensities[j] <-
-            averageSpectrum$intensities[j] / TIC
-      }
-      
-      for (j in 1:length(averageSpectrum$mz))
-        write(
-          paste(
-            averageSpectrum$mz[j],
-            averageSpectrum$intensities[j],
-            sep = " "
-          ),
-          output_file,
-          append = TRUE
+      # store spectrum in matrix for faster write to file
+      averageSpectrumMatrix <-
+        matrix(
+          c(averageSpectrum$mz, averageSpectrum$intensities),
+          ncol = 2,
+          byrow = FALSE
         )
+      
+      if (tclvalue(normalizeState) == "1") {
+        TIC <- sum(averageSpectrumMatrix[, 2])
+        averageSpectrumMatrix[, 2] <- averageSpectrumMatrix[, 2] / TIC
+      }
+      write.table(
+        averageSpectrumMatrix,
+        file = output_file,
+        row.names = FALSE,
+        col.names = FALSE
+      )
     }
     
     # cleanup (run these before switching to SCiLS Lab - R session can be kept open):
@@ -418,6 +419,7 @@ tkgrid(
   padx = 10,
   pady = 20
 )
+
 
 # Start the Tcl/Tk event loop:
 tkwait.window(win)
