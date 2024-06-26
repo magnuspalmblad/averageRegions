@@ -58,7 +58,7 @@ Tooltips provide additional cues on the different elements of the GUI. Hover wit
 
 ### 3.1 Selecting the regions file
 
-Click on the "Select regions (.csv) file" button and select the CSV file defining and naming the regions for which you wish to calculate and export aveage spectra. Technically, these files are not comma-separated, but rather uses semicolons as the field separators.
+Click on the "Select regions (.csv) file" button and select the CSV file defining and naming the regions for which you wish to calculate and export average spectra. This could be a list of existing region names, or a list of new regions and defining polygons (see [example](./example.csv)).
 
 ### 3.2 Selecting the SCiLS Lab dataset
 
