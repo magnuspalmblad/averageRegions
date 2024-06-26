@@ -113,23 +113,43 @@ runScriptOnFiles <- function() {
     }
     
     # start the local server session:
-    for (tryPort in 8082:65535) {
+    for (tryCount in 1:30) {
+      tryPort <- sample(8082:65535, 1)
+      dummy <- c()
+      dummy$filelock = FALSE
       data <-
         tryCatch(
           SCiLSLabOpenLocalSession(datafile, port = tryPort),
           error = function(e) {
             print(e$message)
-            dummy <- c()
-            if(grepl("File is locked by another instance", e$message)) dummy$filelock = TRUE
+            if (grepl("File is locked by another instance", e$message))
+              dummy$filelock = TRUE
             dummy$server_up = FALSE
             return(dummy)
           }
         )
-      if (data$server_up) # we're good to go...
+      if (data$server_up)
+        # we're good to go...
         break
       if (data$filelock) {
-        tkmessageBox(message = "File is locked by another instance.")
+        button <- tk_messageBox(type = "retrycancel",
+                                message = "File is locked by another instance.",
+                                default = "retry")
+        if (button == "cancel") {
+          tkdestroy(win)
+          quit(save = "no", status = 0)
         }
+      }
+    }
+    
+    if (!data$server_up) {
+      button <- tk_messageBox(type = "ok",
+                              message = "Failed to open file.",
+                              default = "ok")
+      if (button == "ok") {
+        tkdestroy(win)
+        quit(save = "no", status = 0)
+      }
     }
     
     # import the region list from a CSV file (saved from SCiLS Lab):
@@ -195,7 +215,8 @@ runScriptOnFiles <- function() {
       
       if (tclvalue(normalizeState) == "1") {
         TIC <- sum(averageSpectrumMatrix[, 2])
-        averageSpectrumMatrix[, 2] <- averageSpectrumMatrix[, 2] / TIC
+        averageSpectrumMatrix[, 2] <-
+          averageSpectrumMatrix[, 2] / TIC
       }
       write.table(
         averageSpectrumMatrix,
