@@ -113,7 +113,24 @@ runScriptOnFiles <- function() {
     }
     
     # start the local server session:
-    data <- SCiLSLabOpenLocalSession(datafile, port = 8082)
+    for (tryPort in 8082:65535) {
+      data <-
+        tryCatch(
+          SCiLSLabOpenLocalSession(datafile, port = tryPort),
+          error = function(e) {
+            print(e$message)
+            dummy <- c()
+            if(grepl("File is locked by another instance", e$message)) dummy$filelock = TRUE
+            dummy$server_up = FALSE
+            return(dummy)
+          }
+        )
+      if (data$server_up) # we're good to go...
+        break
+      if (data$filelock) {
+        tkmessageBox(message = "File is locked by another instance.")
+        }
+    }
     
     # import the region list from a CSV file (saved from SCiLS Lab):
     if (file1 != "") {
@@ -419,7 +436,6 @@ tkgrid(
   padx = 10,
   pady = 20
 )
-
 
 # Start the Tcl/Tk event loop:
 tkwait.window(win)
