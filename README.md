@@ -28,7 +28,7 @@ averageRegions automates the otherwise labor intensive process of creating avera
 
 ## 2. Installing averageRegions
 
-To install averageRegions, simply download the R script and place it in an arbitrary folder, e.g. ```C:\Program Files\SCiLS Lab tools\averageRegions``` on a Windows system. Create a batch (.bat) file calling the R program with ```Rscript.exe``` for a version of R currently installed on your system that is compatible with the SCiLS Lab R API, e.g. R-4.1.2:
+To install averageRegions, simply download the R script and place it in an arbitrary folder, e.g. ```C:\Program Files\SCiLS Lab tools\averageRegions``` on a Windows system. Create a batch (.bat) file calling the R program with ```Rscript.exe``` for a version of R currently installed on your system that is compatible with the SCiLS Lab R API, e.g. R-4.3.2:
 
 ```
 @echo off
