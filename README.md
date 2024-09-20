@@ -79,7 +79,7 @@ To use a custom alignment algorithm optimized for high-resolution spectra before
 
 ## 4. Acknowledgements
 
-The developer wish to thank Rob Marissen for help and support during the development of averageRegions.
+The developer wishes to thank Rob Marissen for help and support during the development of averageRegions.
 
 
 ## 5. Further reading
