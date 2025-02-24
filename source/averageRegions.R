@@ -107,10 +107,6 @@ runScriptOnFiles <- function() {
     # select image file:
     temporary_directory <- tempfile(pattern = "slxdir")
     
-    # direct load (development, remove later):
-    # setwd('D:/Users/nmpalmblad/Desktop')
-    # datafile <- 'D:/Users/nmpalmblad/Desktop/cerebella.slx'
-    
     output_directory <- strsplit(datafile, "\\.slx$")[[1]]
     if (file.exists(output_directory)) {
       print("Warning: Output directory already exists!")
