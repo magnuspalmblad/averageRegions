@@ -93,12 +93,23 @@ updateFilePath <- function(id, path) {
 
 # Define function to be executed when the button is pressed:
 runScriptOnFiles <- function() {
+  # Use quotes around paths to allow spaces in paths and/or filenames:
+  # file1 <- paste(file1, collapse = " ") # not used
+  file2 <- paste(file2, collapse = " ")
+  # file1 <- shQuote(file.path(file1)) # not used
+  file2 <- shQuote(file.path(file2))
   if (file2 != "") {
     library(SCiLSLabClient)
     
+    datafile <- normalizePath(gsub('^"|"$', '', file2), winslash = "\\", mustWork = TRUE)
+    # regions_file <- normalizePath(gsub('^"|"$', '', file1), winslash = "\\", mustWork = TRUE) # not used
+    
     # select image file:
     temporary_directory <- tempfile(pattern = "slxdir")
-    datafile <- file.path(file2)
+    
+    # direct load (development, remove later):
+    # setwd('D:/Users/nmpalmblad/Desktop')
+    # datafile <- 'D:/Users/nmpalmblad/Desktop/cerebella.slx'
     
     output_directory <- strsplit(datafile, "\\.slx$")[[1]]
     if (file.exists(output_directory)) {
@@ -453,6 +464,7 @@ tkgrid(
   padx = 10,
   pady = 20
 )
+
 
 # Start the Tcl/Tk event loop:
 tkwait.window(win)
