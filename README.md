@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/819375119.svg)](https://doi.org/10.5281/zenodo.15582546)
+
 # averageRegions
 averageRegions averages the spectra in defined regions in a SCiLS Lab dataset.
 
