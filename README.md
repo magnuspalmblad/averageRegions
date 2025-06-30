@@ -9,14 +9,14 @@ averageRegions averages the spectra in defined regions in a SCiLS Lab dataset.
 [2. Installing averageRegions](#2-Installing-averageRegions)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[2.1 Running averageRegions](#21-Running-averageRegions)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[2.2 Running averageRegions from within RStudio](#22-Running-averageRegions-from-within-RStudio)  
-[3. Using averageRegionss](#3-Using-averageRegions)  
+[3. Using averageRegions](#3-Using-averageRegions)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3.1 Selecting the regions file](#31-Selecting-the-regions-file)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3.2 Selecting the SCiLS Lab dataset](#32-Selecting-the-SCiLS-Lab-dataset)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3.3 Normalization](#33-Normalization)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3.4 Renaming regions](#34-Renaming-regions)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3.5 Aligning spectra](#35-Aligning-spectra)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3.6 Create union of regions](#36-Create-union-of-regions)    
-[4. Acknowledgements ](#4-Acknowledgements)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3.5 Aligning spectra](#35-Aligning-spectra)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3.6 Create union of regions](#36-Create-union-of-regions)  
+[4. Acknowledgements](#4-Acknowledgements)  
 [5. Further reading](#5-Further-reading)  
 
 ## 1. Introduction
