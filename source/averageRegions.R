@@ -70,7 +70,7 @@ win <- tktoplevel()
 tkwm.title(win, "averageRegions")
 
 # Set the window size:
-tkwm.geometry(win, "730x235")
+tkwm.geometry(win, "730x335")
 
 
 # Initialize text entries for displaying file names:
@@ -93,19 +93,12 @@ updateFilePath <- function(id, path) {
 
 # Define function to be executed when the button is pressed:
 runScriptOnFiles <- function() {
-  # Use quotes around paths to allow spaces in paths and/or filenames:
-  # file1 <- paste(file1, collapse = " ") # not used
-  file2 <- paste(file2, collapse = " ")
-  # file1 <- shQuote(file.path(file1)) # not used
-  file2 <- shQuote(file.path(file2))
   if (file2 != "") {
     library(SCiLSLabClient)
     
-    datafile <- normalizePath(gsub('^"|"$', '', file2), winslash = "\\", mustWork = TRUE)
-    # regions_file <- normalizePath(gsub('^"|"$', '', file1), winslash = "\\", mustWork = TRUE) # not used
-    
     # select image file:
     temporary_directory <- tempfile(pattern = "slxdir")
+    datafile <- file.path(file2)
     
     output_directory <- strsplit(datafile, "\\.slx$")[[1]]
     if (file.exists(output_directory)) {
@@ -132,7 +125,7 @@ runScriptOnFiles <- function() {
           }
         )
       if (data$server_up)
-        # we're good to go...
+        # We're good to go...
         break
       if (data$filelock) {
         button <- tk_messageBox(type = "retrycancel",
@@ -171,13 +164,6 @@ runScriptOnFiles <- function() {
       ))
       averageSpectrum <-
         getMeanSpectrum(data, regionId = regTree$subregions[[i]]$uniqueId)
-      # plot cerebella region spectra for debugging
-      # plot(
-      #   x = averageSpectrum$mz,
-      #   y = averageSpectrum$intensities,
-      #   col = c("red", "blue", "green")[i],
-      #   type = "l"
-      # )
       
       if (tclvalue(renameState) == "1") {
         x <- 0
@@ -187,6 +173,7 @@ runScriptOnFiles <- function() {
           x <- x + sum(regTree$subregions[[i]]$polygons[[j]]$x)
           y <- y + sum(regTree$subregions[[i]]$polygons[[j]]$y)
           n <- n + length(regTree$subregions[[i]]$polygons[[j]]$x)
+          xyunion <- unique(rbind(xyunion, c(x, y)))
         }
         average_x <- round(x / n)
         average_y <- round(y / n)
@@ -221,12 +208,177 @@ runScriptOnFiles <- function() {
         averageSpectrumMatrix[, 2] <-
           averageSpectrumMatrix[, 2] / TIC
       }
+      
       write.table(
         averageSpectrumMatrix,
         file = output_file,
         row.names = FALSE,
         col.names = FALSE
       )
+    }
+    
+    
+    # Extract spectra from subsubregions:
+    print("Extracting average spectra from subsubregions")
+    for (i in 1:length(regTree$subregions)) {
+      if (length(regTree$subregions[[i]]$subregions) > 0) {
+        for (j in 1:length(regTree$subregions[[i]]$subregions)) {
+          print(
+            paste(
+              "Extracting average spectrum from region",
+              regTree$subregions[[i]]$subregions[[j]]$name
+            )
+          )
+          averageSpectrum <-
+            getMeanSpectrum(data, regionId = regTree$subregions[[i]]$subregions[[j]]$uniqueId)
+          
+          if (tclvalue(renameState) == "1") {
+            x <- 0
+            y <- 0
+            n <- 0
+            for (k in 1:length(regTree$subregions[[i]]$subregions[[j]]$polygons)) {
+              x <-
+                x + sum(regTree$subregions[[i]]$subregions[[j]]$polygons[[k]]$x)
+              y <-
+                y + sum(regTree$subregions[[i]]$subregions[[j]]$polygons[[k]]$y)
+              n <-
+                n + length(regTree$subregions[[i]]$subregions[[j]]$polygons[[k]]$x)
+            }
+            average_x <- round(x / n)
+            average_y <- round(y / n)
+            output_file <-
+              paste0(output_directory,
+                     "/x",
+                     average_x,
+                     "_",
+                     "y",
+                     average_y,
+                     ".xy")
+            file.create(output_file)
+          } else {
+            print(regTree$subregions[[i]]$subregions[[j]]$name)
+            output_file <-
+              paste0(
+                output_directory,
+                "/",
+                strsplit(regTree$subregions[[i]]$name, "/")[[1]][2],
+                "_",
+                strsplit(regTree$subregions[[i]]$subregions[[j]]$name, "/")[[1]][3],
+                ".xy"
+              )
+            file.create(output_file)
+          }
+          
+          # store spectrum in matrix for faster write to file
+          averageSpectrumMatrix <-
+            matrix(
+              c(averageSpectrum$mz, averageSpectrum$intensities),
+              ncol = 2,
+              byrow = FALSE
+            )
+          
+          if (tclvalue(normalizeState) == "1") {
+            TIC <- sum(averageSpectrumMatrix[, 2])
+            averageSpectrumMatrix[, 2] <-
+              averageSpectrumMatrix[, 2] / TIC
+          }
+          
+          write.table(
+            averageSpectrumMatrix,
+            file = output_file,
+            row.names = FALSE,
+            col.names = FALSE
+          )
+        }
+      }
+    }
+    
+    # Extract spectra from subsubsubregions:
+    print("Extracting average spectra from subsubsubregions")
+    for (i in 1:length(regTree$subregions)) {
+      if (length(regTree$subregions[[i]]$subregions) > 0) {
+        for (j in 1:length(regTree$subregions[[i]]$subregions)) {
+          if (length(regTree$subregions[[i]]$subregions[[j]]$subregions) > 0) {
+            for (k in 1:length(regTree$subregions[[i]]$subregions[[j]]$subregions)) {
+              print(
+                paste(
+                  "Extracting average spectrum from region",
+                  regTree$subregions[[i]]$subregions[[j]]$subregions[[k]]$name
+                )
+              )
+              averageSpectrum <-
+                getMeanSpectrum(data,
+                                regionId = regTree$subregions[[i]]$subregions[[j]]$subregions[[k]]$uniqueId)
+              
+              if (tclvalue(renameState) == "1") {
+                x <- 0
+                y <- 0
+                n <- 0
+                for (l in 1:length(regTree$subregions[[i]]$subregions[[j]]$subregions[[k]]$polygons)) {
+                  x <-
+                    x + sum(regTree$subregions[[i]]$subregions[[j]]$subregions[[k]]$polygons[[l]]$x)
+                  y <-
+                    y + sum(regTree$subregions[[i]]$subregions[[j]]$subregions[[k]]$polygons[[l]]$y)
+                  n <-
+                    n + length(regTree$subregions[[i]]$subregions[[j]]$subregions[[k]]$polygons[[l]]$x)
+                }
+                average_x <- round(x / n)
+                average_y <- round(y / n)
+                output_file <-
+                  paste0(output_directory,
+                         "/x",
+                         average_x,
+                         "_",
+                         "y",
+                         average_y,
+                         ".xy")
+                file.create(output_file)
+              } else {
+                print(regTree$subregions[[i]]$subregions[[j]]$subregions[[k]]$name)
+                output_file <-
+                  paste0(
+                    output_directory,
+                    "/",
+                    strsplit(regTree$subregions[[i]]$name, "/")[[1]][2],
+                    "_",
+                    strsplit(regTree$subregions[[i]]$subregions[[j]]$name, "/")[[1]][3],
+                    "_",
+                    strsplit(
+                      regTree$subregions[[i]]$subregions[[j]]$subregions[[k]]$name,
+                      "/"
+                    )[[1]][4],
+                    ".xy"
+                  )
+                file.create(output_file)
+              }
+              
+              # store spectrum in matrix for faster write to file
+              averageSpectrumMatrix <-
+                matrix(
+                  c(
+                    averageSpectrum$mz,
+                    averageSpectrum$intensities
+                  ),
+                  ncol = 2,
+                  byrow = FALSE
+                )
+              
+              if (tclvalue(normalizeState) == "1") {
+                TIC <- sum(averageSpectrumMatrix[, 2])
+                averageSpectrumMatrix[, 2] <-
+                  averageSpectrumMatrix[, 2] / TIC
+              }
+              
+              write.table(
+                averageSpectrumMatrix,
+                file = output_file,
+                row.names = FALSE,
+                col.names = FALSE
+              )
+            }
+          }
+        }
+      }
     }
     
     # cleanup (run these before switching to SCiLS Lab - R session can be kept open):
@@ -264,6 +416,8 @@ runScriptOnFiles <- function() {
     tkmessageBox(message = "Please select at least an .slx file before running averageRegions.")
   }
 }
+
+
 
 # Create tooltip:
 # Function to create a tooltip
@@ -327,7 +481,7 @@ tkgrid(
   entryFile1,
   row = 1,
   column = 2,
-  columnspan = 2,
+  columnspan = 3,
   padx = 10,
   pady = 10
 )
@@ -359,7 +513,7 @@ tkgrid(
   entryFile2,
   row = 2,
   column = 2,
-  columnspan = 2,
+  columnspan = 3,
   padx = 10,
   pady = 10
 )
@@ -385,9 +539,9 @@ btnRunScript <-
   tkbutton(win, text = "Average spectra per region", command = runScriptOnFiles)
 tkgrid(
   btnRunScript,
-  row = 4,
+  row = 8,
   column = 1,
-  columnspan = 3,
+  columnspan = 4,
   padx = 10,
   pady = 5
 )
@@ -460,6 +614,78 @@ tkgrid(
   padx = 10,
   pady = 20
 )
+
+# Variable to hold the state of the checkbox (1 for checked, 0 for unchecked):
+unionState <- tclVar(0)
+
+# Create a checkbox
+chkBox <-
+  tkcheckbutton(win, text = "Make union of ROIs", variable = unionState)
+
+tkgrid(
+  chkBox,
+  row = 3,
+  column = 4,
+  columnspan = 1,
+  padx = 10,
+  pady = 20
+)
+
+# Create radio buttons for export format
+radioLabel <- tklabel(win, text = "Output format")
+
+tkgrid(
+  radioLabel,
+  row = 4,
+  column = 1,
+  columnspan = 1,
+  padx = 25,
+  pady = 5,
+  sticky = "w"
+)
+outputFormat <- tclVar(1)
+radio1 <-
+  tkradiobutton(win,
+                text = "Bruker .xy",
+                variable = outputFormat,
+                value = 1)
+tkgrid(
+  radio1,
+  row = 5,
+  column = 1,
+  padx = 25,
+  sticky = "w"
+)
+
+radio2 <-
+  tkradiobutton(win,
+                text = "mzML",
+                variable = outputFormat,
+                value = 2)
+tkgrid(
+  radio2,
+  row = 6,
+  column = 1,
+  padx = 25,
+  sticky = "w"
+)
+
+radio3 <-
+  tkradiobutton(win,
+                text = "MGF",
+                variable = outputFormat,
+                value = 3)
+tkgrid(
+  radio3,
+  row = 7,
+  column = 1,
+  padx = 25,
+  sticky = "w"
+)
+
+
+# Variable to hold the state of the checkbox (1 for checked, 0 for unchecked):
+renameState <- tclVar(0)
 
 
 # Start the Tcl/Tk event loop:
