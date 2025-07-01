@@ -57,7 +57,7 @@ averageRegions has a clean graphical user interface (GUI):
 
 ![screenshot](./pictures/averageRegions.png)
 
-Tooltips provide additional cues on the different elements of the GUI. Hover with the mouse pointer over a button to see what action it will trigger.
+Tooltips provide additional cues on the different elements of the GUI. Hover with the mouse pointer over a button to see what action it will trigger. If not providing new regions of interest, average spectra from all regions, their subregions and subsubregions in the SCiLS Lab dataset are automatically exported to a flat list of files in a directory of the same name as the SCiLS Lab dataset, with the hierarchy preserved in the filenames.
 
 ### 3.1 Selecting the regions file
 
@@ -86,7 +86,7 @@ To create a union of all regions and export the average spectrum for this union,
 
 ## 4. Acknowledgements
 
-The developer wishes to thank Rob Marissen for help and support during the development of averageRegions.
+The developer wishes to thank Rob Marissen for help and support during the development of averageRegions. Hans Dalebout is also gratefully acknowledged for his suggestions and feedback on the software.
 
 
 ## 5. Further reading
