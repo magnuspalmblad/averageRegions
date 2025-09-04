@@ -1,4 +1,6 @@
 [![DOI](https://zenodo.org/badge/819375119.svg)](https://doi.org/10.5281/zenodo.15582546)
+[![bio.tools](https://img.shields.io/badge/bio.tools-averageRegions-blue)](https://bio.tools/averageRegions)
+
 
 # averageRegions
 averageRegions averages the spectra in defined regions in a SCiLS Lab dataset.
